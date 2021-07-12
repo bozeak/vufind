@@ -110,6 +110,11 @@ class Module implements ConfigProviderInterface
                         $container->get(Model\Consumer::class)
                     );
                 },
+                Controller\CreateConsumerController::class => function($container) {
+                    return new Controller\CreateConsumerController(
+                        $container->get(Model\Consumer::class)
+                    );
+                },
             ],
         ];
     }

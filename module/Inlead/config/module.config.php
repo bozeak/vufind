@@ -7,37 +7,36 @@ use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Method;
 use Laminas\Router\Http\Segment;
 
-$config = [
+return [
     'router' => [
         'routes' => [
             'inlead.manager' => [
                 'type' => Literal::class,
                 'options' => [
-                    'route' => '/manager',
+                    'route' => '/api/manager',
                     'defaults' => [
                         'controller' => Controller\ManagerAPIController::class,
                         'action' => 'getList'
                     ]
                 ],
-//                'may_terminate' => true,
-//                'child_routes' => [
-//                    'details' => [
-//                        'type' => Segment::class,
-//                        'options' => [
-//                            'verb' => 'get',
-//                            'route' => '/:id',
-//                            'constraints' => [
-//                                'id' => '\d+',
-//                            ],
-//                        ],
-//                    ],
-//                ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'details' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'verb' => 'get',
+                            'route' => '/:id',
+                            'constraints' => [
+                                'id' => '\d+',
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'inlead.manager.create' => [
-                'type' => Method::class,
+                'type' => Literal::class,
                 'options' => [
-                    'verb' => 'post',
-                    'route' => '/manager/create',
+                    'route' => '/api/manager/create',
                     'defaults' => [
                         'controller' => Controller\ManagerAPIController::class,
                         'action' => 'create'
@@ -45,10 +44,10 @@ $config = [
                 ],
             ],
             'inlead.manager.update' => [
-                'type' => Method::class,
+                'type' => Literal::class,
                 'options' => [
                     'verb' => 'put',
-                    'route' => '/manager/update',
+                    'route' => '/api/manager/update',
                     'defaults' => [
                         'controller' => Controller\ManagerAPIController::class,
                         'action' => 'update'
@@ -56,10 +55,10 @@ $config = [
                 ],
             ],
             'inlead.manager.destroy' => [
-                'type' => 'method',
+                'type' => Literal::class,
                 'options' => [
                     'verb' => 'delete',
-                    'route' => '/manager',
+                    'route' => '/api/manager/destroy',
                     'defaults' => [
                         'controller' => Controller\ManagerAPIController::class,
                         'action' => 'destroy'
@@ -92,5 +91,3 @@ $config = [
         ]
     ],
 ];
-
-return $config;

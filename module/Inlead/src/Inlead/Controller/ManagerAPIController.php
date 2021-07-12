@@ -44,26 +44,30 @@ class ManagerAPIController extends AbstractActionController implements ApiInterf
      */
     public function getListAction()
     {
-        $service = $this->serviceLocator->get(PluginManager::class)
-            ->get('Consumer');
+        if ($this->request->isGet()) {
+            $service = $this->serviceLocator->get(PluginManager::class)
+                ->get('Consumer');
 
-        $id = (int)$this->params()->fromRoute('id');
+            $id = (int)$this->params()->fromRoute('id');
 
-        $data = $service->getAllConsumers();
-        if (!empty($id)) {
-            $data = $service->getConsumer($id);
+            $data = $service->getAllConsumers();
+            if (!empty($id)) {
+                $data = $service->getConsumer($id);
+            }
+
+            $response = [
+                'consumers' => $data->toArray(),
+                'count' => count($data),
+            ];
+
+            return $this->output(
+                $response,
+                self::STATUS_OK,
+                200
+            );
         }
 
-        $response = [
-            'consumers' => $data->toArray(),
-            'count' => count($data),
-        ];
-
-        return $this->output(
-            $response,
-            self::STATUS_OK,
-            200
-        );
+        return $this->output(['message' => 'Wrong method used.'], self::STATUS_ERROR);
     }
 
     /**
@@ -71,7 +75,7 @@ class ManagerAPIController extends AbstractActionController implements ApiInterf
      * @return Response
      * @throws JsonException
      */
-    public function createAction(ConsumerModel $consumer)
+    public function createAction()
     {
         $a = 1;
         if ($this->request->isPost()) {
