@@ -1,21 +1,35 @@
 <?php
 
+/**
+ * @OA\Info(
+ *     title="Manager API",
+ *     version="1.0.0"
+ * )
+ * @OA\Server(
+ *     url="http://10.0.0.98/vufind"
+ * )
+ *
+ * @OA\Parameter(
+ *     name="id",
+ *     in="path",
+ *     @OA\Schema(
+ *         type="string"
+ *     ),
+ *     required=true
+ * )
+ */
 
 namespace Inlead\Controller;
 
 use Exception;
 use Inlead\Db\Table\Consumer;
 use Inlead\Db\Table\PluginManager;
-use Inlead\Model\Consumer as ConsumerModel;
-use JsonException;
-use Laminas\Http\Client;
 use Laminas\Http\Response;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use OpenApi\Annotations as OA;
 use VuFindApi\Controller\ApiInterface;
 use VuFindApi\Controller\ApiTrait;
-use VuFindHarvest\OaiPmh\Harvester;
-use VuFindHarvest\OaiPmh\HarvesterFactory;
 
 class ManagerAPIController extends AbstractActionController implements ApiInterface
 {
@@ -39,8 +53,43 @@ class ManagerAPIController extends AbstractActionController implements ApiInterf
     }
 
     /**
-     * @return Response
-     * @throws Exception
+     * @OA\Get(
+     *     path="/api/manager",
+     *     tags={"Consumer management"},
+     *     summary="Returns consumer or a list of consumers.",
+     *     description="Querying the consumers",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Counld not find resource."
+     *     )
+     * )
+     */
+
+    /**
+     * @OA\Get(
+     *     path="/api/manager/{id}",
+     *     tags={"Consumer management"},
+     *     summary="Returns consumer details.",
+     *     description="Querying the specific consumer",
+     *     @OA\Parameter(
+     *          ref="#/components/parameters/id"
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *         @OA\MediaType(
+     *              mediaType="application/json"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Counld not find resource."
+     *     )
+     * )
      */
     public function getListAction()
     {
@@ -71,13 +120,35 @@ class ManagerAPIController extends AbstractActionController implements ApiInterf
     }
 
     /**
-     * @param ConsumerModel $consumer
-     * @return Response
-     * @throws JsonException
+     * @OA\Post(
+     *     path="/api/manager/create",
+     *     tags={"Consumer management"},
+     *     summary="Returns most accurate search result object",
+     *     description="Search for an object, if found return it!",
+     *     @OA\RequestBody(
+     *         description="Consumer object",
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(ref="#/components/schemas/Consumer"),
+     *             @OA\Examples(
+     *                 example="Consumer",
+     *                 summary="Consumer insert",
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Created",
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Could Not Find Resource"
+     *     )
+     * )
      */
     public function createAction()
     {
-        $a = 1;
         if ($this->request->isPost()) {
             $content = $this->request->getContent();
 
@@ -101,13 +172,40 @@ class ManagerAPIController extends AbstractActionController implements ApiInterf
             } catch (Exception $e) {
                 print_r($e->getMessage());
             }
-        }
-        else {
+        } else {
             return $this->output(['message' => 'Wrong method used.'], self::STATUS_ERROR);
         }
     }
 
     /**
+     * @OA\Delete(
+     *     path="/api/manager/destroy",
+     *     tags={"Consumer management"},
+     *     summary="Deletes the requested consumer by given id.",
+     *     @OA\RequestBody(
+     *          description="ID must be passed",
+     *          required=true,
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *              @OA\Schema(
+     *                 @OA\Property(
+     *                     property="id",
+     *                     type="int"
+     *                 ),
+     *                 example={"id": "999"}
+     *             )
+     *          ),
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Could Not Find Resource"
+     *     )
+     * )
+     *
      * @return Response
      * @throws Exception
      */
@@ -128,13 +226,34 @@ class ManagerAPIController extends AbstractActionController implements ApiInterf
                 ],
                 self::STATUS_OK
             );
-        }
-        else {
+        } else {
             return $this->output(['message' => 'Wrong method used.'], self::STATUS_ERROR);
         }
     }
 
     /**
+     * @OA\Put(
+     *     path="/api/manager/update",
+     *     tags={"Consumer management"},
+     *     summary="Update the requested consumer by given id.",
+     *     @OA\RequestBody(
+     *          description="ID must be passed",
+     *          required=true,
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *              @OA\Schema(ref="#/components/schemas/Consumer"),
+     *          ),
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Could Not Find Resource"
+     *     )
+     * )
+     *
      * @return Response
      * @throws Exception
      */
@@ -163,34 +282,6 @@ class ManagerAPIController extends AbstractActionController implements ApiInterf
 
         return $this->output(['message' => 'Wrong method used.'], self::STATUS_ERROR);
     }
-
-    /**
-     * Start harvesting.
-     * @throws Exception
-     */
-//    public function startImportAction()
-//    {
-//        $service = $this->serviceLocator->get(PluginManager::class)
-//            ->get('Consumer');
-//        $consumers = $service->getAllConsumers()->toArray();
-//        if (!empty($consumers)) {
-//
-//            $harvester = new HarvesterFactory();
-//            $client = new Client();
-//            $settings = [
-//                'url' => $consumers[0]['source_url'],
-//            ];
-////        $harvester->getHarvester($consumers[0]['name'], './local/harvest', $client, $settings);
-//            $a = 1;
-//        }
-//        return $this->output(['asdfa' => 'wqerqw'], self::STATUS_OK);
-//    }
-
-//    public function bozeakAction()
-//    {
-//        $a = 1;
-//        var_dump('biolslsls');
-//    }
 
     public function getSwaggerSpecFragment()
     {

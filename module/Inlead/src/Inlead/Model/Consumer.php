@@ -2,10 +2,33 @@
 
 namespace Inlead\Model;
 
+use OpenApi\Annotations as OA;
+
+/**
+ * Class Consumer
+ * @package Inlead\Model
+ *
+ * @OA\Schema()
+ */
 class Consumer
 {
+    /**
+     * Consumer id.
+     * @var int
+     * @OA\Property()
+     */
     public $id;
+    /**
+     * Consumer name.
+     * @var string
+     * @OA\Property(example="sambib")
+     */
     public $name;
+    /**
+     * Consumer url.
+     * @var string
+     * @OA\Property(example="https://bibsys-vz.alma.exlibrisgroup.com/view/oai/47BIBSYS_SAMBIB/request")
+     */
     public $sourceUrl;
 
     /**

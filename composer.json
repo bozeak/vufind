@@ -76,7 +76,8 @@
         "webfontkit/open-sans": "^1.0",
         "wikimedia/less.php": "2.0.0",
         "yajra/laravel-pdo-via-oci8": "2.2.0",
-        "ext-json": "*"
+        "ext-json": "*",
+        "zircote/swagger-php": "^3.2"
     },
     "require-dev": {
         "behat/mink": "1.8.1",

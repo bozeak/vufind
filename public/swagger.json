@@ -1,0 +1,123 @@
+openapi: 3.0.0
+info:
+  title: 'Manager API'
+  version: 1.0.0
+servers:
+  -
+    url: 'http://10.0.0.98/vufind'
+paths:
+  /api/manager:
+    get:
+      tags:
+        - 'Consumer management'
+      summary: 'Returns consumer or a list of consumers.'
+      description: 'Querying the consumers'
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: 'Counld not find resource.'
+  '/api/manager/{id}':
+    get:
+      tags:
+        - 'Consumer management'
+      summary: 'Returns consumer details.'
+      description: 'Querying the specific consumer'
+      operationId: 34771de36e51384ecab0693a33669f40
+      parameters:
+        -
+          $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json: {  }
+        '404':
+          description: 'Counld not find resource.'
+  /api/manager/create:
+    post:
+      tags:
+        - 'Consumer management'
+      summary: 'Returns most accurate search result object'
+      description: 'Search for an object, if found return it!'
+      operationId: b4bed6cf9db434f2a2dfe86d837040f3
+      requestBody:
+        description: 'Consumer object'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Consumer'
+            examples:
+              Consumer:
+                summary: 'Consumer insert'
+      responses:
+        '201':
+          description: Created
+        '404':
+          description: 'Could Not Find Resource'
+  /api/manager/destroy:
+    delete:
+      tags:
+        - 'Consumer management'
+      summary: 'Deletes the requested consumer by given id.'
+      operationId: 8b7275830578e800240cd43285fe362e
+      requestBody:
+        description: 'ID must be passed'
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                id:
+                  type: int
+              type: object
+              example:
+                id: '999'
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: 'Could Not Find Resource'
+  /api/manager/update:
+    put:
+      tags:
+        - 'Consumer management'
+      summary: 'Update the requested consumer by given id.'
+      operationId: 8486a1749bd4113bb4518e3917684a70
+      requestBody:
+        description: 'ID must be passed'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Consumer'
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: 'Could Not Find Resource'
+components:
+  schemas:
+    Consumer:
+      description: 'Class Consumer'
+      properties:
+        id:
+          description: 'Consumer id.'
+          type: integer
+        name:
+          description: 'Consumer name.'
+          type: string
+          example: sambib
+        sourceUrl:
+          description: 'Consumer url.'
+          type: string
+          example: 'https://bibsys-vz.alma.exlibrisgroup.com/view/oai/47BIBSYS_SAMBIB/request'
+      type: object
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
